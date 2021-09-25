@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -68,9 +69,9 @@ func (Server) Init(cmd *cobra.Command) error {
 		return err
 	}
 
-	cmd.PersistentFlags().String("basedir", "", "The base directory for assets and profiles")
+	cmd.PersistentFlags().String("basedir", "", "The base directory for assets and profiles (defaults to /etc/transcode or current working directory)")
 
-	cmd.PersistentFlags().String("profiles", "default", "The hardware encoding profiles to load for ffmpeg (default, nvidia)")
+	cmd.PersistentFlags().String("profiles", "", "Absolute path containing the ffmpeg profiles for transcoding (defaults to [basedir]/profiles)")
 
 	return nil
 }
@@ -91,6 +92,9 @@ func (s *Server) Set() {
 		}
 	}
 	s.Profiles = viper.GetString("profiles")
-	if s.Profiles == "" { s.Profiles = "default" }
+	if s.Profiles == "" {
+		// TODO: issue #5
+		s.Profiles = fmt.Sprintf("%s/profiles", s.BaseDir)
+	}
 	s.Streams = viper.GetStringMapString("streams")
 }

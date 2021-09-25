@@ -42,8 +42,10 @@ func (a *ApiManagerCtx) transcodeStart(folder string, profile string, input stri
 		return nil, fmt.Errorf("invalid profile path")
 	}
 
-	// [basedir]/profiles/[profiles]/hls,http/[profile]
-	profilePath := fmt.Sprintf("%s/profiles/%s/%s/%s.sh", a.Conf.BaseDir, a.Conf.Profiles, folder, profile)
+	// folder is hls or http, profile is h264_720p (example)
+	// Server.Profiles (a.Conf.Profiles) is profiles directory
+	// TODO: issue #5
+	profilePath := fmt.Sprintf("%s/%s/%s.sh", a.Conf.Profiles, folder, profile)
 	if _, err := os.Stat(profilePath); os.IsNotExist(err) {
 		return nil, err
 	}
